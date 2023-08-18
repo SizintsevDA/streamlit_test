@@ -14,8 +14,8 @@ This is the **EDA App** created in Streamlit using the **pandas-profiling** libr
 ''')
 
 # Upload CSV data
-with st.sidebar.header('1. Upload your CSV data'):
-    uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
+with st.sidebar.header('1. Загрузите CSV файл с вашего ПК'):
+    uploaded_file = st.sidebar.file_uploader("Загрузка вашего CSV файла", type=["csv"])
     st.sidebar.markdown("""
 [Example CSV input file](https://raw.githubusercontent.com/dataprofessor/data/master/delaney_solubility_with_descriptors.csv)
 """)
@@ -34,8 +34,8 @@ if uploaded_file is not None:
     st.header('**Pandas Profiling Report**')
     st_profile_report(pr)
 else:
-    st.info('Awaiting for CSV file to be uploaded.')
-    if st.button('Press to use Example Dataset'):
+    st.info('Ожидание загрузки CSV файла.')
+    if st.button('Нажмите чтобы использовать тестовый датасет'):
         # Example data
         @st.cache_data
         def load_data():
