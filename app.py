@@ -9,10 +9,7 @@ from streamlit_pandas_profiling import st_profile_report
 
 # Web App Title
 st.markdown('''
-# **The EDA App**
-
-This is the **EDA App** created in Streamlit using the **pandas-profiling** library.
-
+# **Добавлениее данных в хранилище**
 ''')
 
 # Upload CSV data
@@ -31,7 +28,7 @@ if uploaded_file is not None:
         return csv
     df = load_csv()
     pr = ProfileReport(df, explorative=True)
-    st.header('**Input DataFrame**')
+    st.header('**Загружаемый файл**')
     st.write(df)
     st.write('---')
     st.header('**Pandas Profiling Report**')
