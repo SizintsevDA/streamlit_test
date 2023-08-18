@@ -46,7 +46,7 @@ else:
             return a
         df = load_data()
         pr = ProfileReport(df, explorative=True)
-        st.header('**Input DataFrame**')
+        st.header('**Загружаемый файл')
         st.write(df)
         st.write('---')
         st.header('**Pandas Profiling Report**')
