@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
-#from pandas_profiling import ProfileReport
+
+# from pandas_profiling import ProfileReport
+
 from ydata_profiling import ProfileReport
 from streamlit_pandas_profiling import st_profile_report
 
@@ -17,7 +19,8 @@ This is the **EDA App** created in Streamlit using the **pandas-profiling** libr
 with st.sidebar.header('1. Загрузите CSV файл с вашего ПК'):
     uploaded_file = st.sidebar.file_uploader("Загрузка вашего CSV файла", type=["csv"])
     st.sidebar.markdown("""
-[Example CSV input file](https://raw.githubusercontent.com/dataprofessor/data/master/delaney_solubility_with_descriptors.csv)
+[Example CSV input file]
+(https://raw.githubusercontent.com/dataprofessor/data/master/delaney_solubility_with_descriptors.csv)
 """)
 
 # Pandas Profiling Report
