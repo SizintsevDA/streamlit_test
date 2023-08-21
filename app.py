@@ -2,11 +2,11 @@ import streamlit as st
 import pandas as pd
 import psycopg2
 
-# Streamlit configuration
-st.set_page_config(page_title="CSV to PostgreSQL", layout="wide")
+# Настройки окна приложения в streamlit
+st.set_page_config(page_title="Загрузка файлов CSV в хранилище данных (PostgreSQL)", layout="wide")
 
 
-# Database connection function
+# Параметры подключения к PostgreSQL
 def create_connection():
     conn = psycopg2.connect(
         database="your_database",
@@ -18,11 +18,11 @@ def create_connection():
     return conn
 
 
-# Streamlit app
+# Само приложение
 def main():
-    st.title("CSV to PostgreSQL Upload")
+    st.title("Загрузка файлов CSV в хранилище данных (PostgreSQL)")
 
-    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+    uploaded_file = st.file_uploader("Загрузите CSV файл с вашего компьютера", type=["csv"])
 
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
@@ -41,7 +41,7 @@ def main():
             conn.commit()
             conn.close()
 
-            st.success("Data uploaded to PostgreSQL!")
+            st.success("Данные успешно загружены!")
 
 
 if __name__ == "__main__":
