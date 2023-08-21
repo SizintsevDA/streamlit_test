@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import psycopg2
+import pyad
 
 # Настройки окна приложения в streamlit
 st.set_page_config(page_title="Загрузка файлов CSV в хранилище данных (PostgreSQL)", layout="wide")
