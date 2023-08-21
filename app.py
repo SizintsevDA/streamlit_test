@@ -1,8 +1,11 @@
 import streamlit as st
 import pandas as pd
+
 import psycopg2
+
 from psycopg2 import sql
 from typing import List, Tuple
+
 
 # Функция для определения типов данных столбцов на основе данных CSV
 def get_column_data_types(csv_data: pd.DataFrame) -> List[Tuple[str, str]]:
@@ -16,11 +19,12 @@ def get_column_data_types(csv_data: pd.DataFrame) -> List[Tuple[str, str]]:
             data_types.append((column, "TEXT"))
     return data_types
 
+
 # Функция для загрузки данных из CSV файла в PostgreSQL
 def upload_csv_to_postgres(
-    csv_data: pd.DataFrame,
-    connection: psycopg2.extensions.connection,
-    table_name: str
+        csv_data: pd.DataFrame,
+        connection: psycopg2.extensions.connection,
+        table_name: str
 ):
     cursor = connection.cursor()
 
@@ -46,5 +50,4 @@ def upload_csv_to_postgres(
 
     st.success("Данные успешно загружены в PostgreSQL!")
 
-if __name__ == "__main__":
-    main()
+
