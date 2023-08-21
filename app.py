@@ -20,7 +20,7 @@ def create_connection():
 
 # Само приложение
 def main():
-    st.title("Загрузка файлов CSV ввввв хранилище данных (PostgreSQL)")
+    st.title("Загрузка файлов CSV в хранилище данных (PostgreSQL)")
 
     uploaded_file = st.file_uploader("Загрузите CSV файл с вашего компьютера", type=["csv"])
 
