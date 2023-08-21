@@ -1,53 +1,50 @@
-import numpy as np
-import pandas as pd
 import streamlit as st
+import pandas as pd
+import psycopg2
+from psycopg2 import sql
+from typing import List, Tuple
 
-# from pandas_profiling import ProfileReport
+# Функция для определения типов данных столбцов на основе данных CSV
+def get_column_data_types(csv_data: pd.DataFrame) -> List[Tuple[str, str]]:
+    data_types = []
+    for column, dtype in csv_data.dtypes.iteritems():
+        if dtype == "int64":
+            data_types.append((column, "INTEGER"))
+        elif dtype == "float64":
+            data_types.append((column, "FLOAT"))
+        else:
+            data_types.append((column, "TEXT"))
+    return data_types
 
-from ydata_profiling import ProfileReport
-from streamlit_pandas_profiling import st_profile_report
+# Функция для загрузки данных из CSV файла в PostgreSQL
+def upload_csv_to_postgres(
+    csv_data: pd.DataFrame,
+    connection: psycopg2.extensions.connection,
+    table_name: str
+):
+    cursor = connection.cursor()
 
-# Web App Title
-st.markdown('''
-# **Добавлениее данных в хранилище**
-''')
+    # Определение типов данных столбцов на основе CSV данных
+    column_data_types = get_column_data_types(csv_data)
 
-# Upload CSV data
-with st.sidebar.header('1. Загрузите CSV файл с вашего ПК'):
-    uploaded_file = st.sidebar.file_uploader("Загрузка вашего CSV файла", type=["csv"])
-    st.sidebar.markdown("""
-[Example CSV input file]
-(https://raw.githubusercontent.com/dataprofessor/data/master/delaney_solubility_with_descriptors.csv)
-""")
+    # Создание таблицы в PostgreSQL с соответствующими типами данных
+    create_table_query = sql.SQL(
+        "CREATE TABLE IF NOT EXISTS {} ({});"
+    ).format(
+        sql.Identifier(table_name),
+        sql.SQL(', ').join(
+            sql.SQL('{} {}').format(sql.Identifier(col_name), sql.SQL(col_type))
+            for col_name, col_type in column_data_types
+        )
+    )
+    cursor.execute(create_table_query)
 
-# Pandas Profiling Report
-if uploaded_file is not None:
-    @st.cache_data
-    def load_csv():
-        csv = pd.read_csv(uploaded_file)
-        return csv
-    df = load_csv()
-    pr = ProfileReport(df, explorative=True)
-    st.header('**Загружаемый файл**')
-    st.write(df)
-    st.write('---')
-    st.header('**Pandas Profiling Report**')
-    st_profile_report(pr)
-else:
-    st.info('Ожидание загрузки CSV файла.')
-    if st.button('Нажмите чтобы использовать тестовый датасет'):
-        # Example data
-        @st.cache_data
-        def load_data():
-            a = pd.DataFrame(
-                np.random.rand(100, 5),
-                columns=['a', 'b', 'c', 'd', 'e']
-            )
-            return a
-        df = load_data()
-        pr = ProfileReport(df, explorative=True)
-        st.header('**Загружаемый файл')
-        st.write(df)
-        st.write('---')
-        st.header('**Pandas Profiling Report**')
-        st_profile_report(pr)
+    # Загрузка данных из DataFrame в таблицу PostgreSQL
+    csv_data.to_sql(table_name, connection, if_exists="append", index=False)
+
+    connection.commit()
+
+    st.success("Данные успешно загружены в PostgreSQL!")
+
+if __name__ == "__main__":
+    main()
