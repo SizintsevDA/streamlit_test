@@ -1,53 +1,48 @@
-import numpy as np
-import pandas as pd
 import streamlit as st
+import pandas as pd
+import psycopg2
 
-# from pandas_profiling import ProfileReport
+# Streamlit configuration
+st.set_page_config(page_title="CSV to PostgreSQL", layout="wide")
 
-from ydata_profiling import ProfileReport
-from streamlit_pandas_profiling import st_profile_report
 
-# Web App Title
-st.markdown('''
-# **Добавлениее данных в хранилище**
-''')
+# Database connection function
+def create_connection():
+    conn = psycopg2.connect(
+        database="your_database",
+        user="your_user",
+        password="your_password",
+        host="your_host",
+        port="your_port"
+    )
+    return conn
 
-# Upload CSV data
-with st.sidebar.header('1. Загрузите CSV файл с вашего ПК'):
-    uploaded_file = st.sidebar.file_uploader("Загрузка вашего CSV файла", type=["csv"])
-    st.sidebar.markdown("""
-[Example CSV input file]
-(https://raw.githubusercontent.com/dataprofessor/data/master/delaney_solubility_with_descriptors.csv)
-""")
 
-# Pandas Profiling Report
-if uploaded_file is not None:
-    @st.cache_data
-    def load_csv():
-        csv = pd.read_csv(uploaded_file)
-        return csv
-    df = load_csv()
-    pr = ProfileReport(df, explorative=True)
-    st.header('**Загружаемый файл**')
-    st.write(df)
-    st.write('---')
-    st.header('**Pandas Profiling Report**')
-    st_profile_report(pr)
-else:
-    st.info('Ожидание загрузки CSV файла.')
-    if st.button('Нажмите чтобы использовать тестовый датасет'):
-        # Example data
-        @st.cache_data
-        def load_data():
-            a = pd.DataFrame(
-                np.random.rand(100, 5),
-                columns=['a', 'b', 'c', 'd', 'e']
-            )
-            return a
-        df = load_data()
-        pr = ProfileReport(df, explorative=True)
-        st.header('**Загружаемый файл')
+# Streamlit app
+def main():
+    st.title("CSV to PostgreSQL Upload")
+
+    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+        st.write("Uploaded data:")
         st.write(df)
-        st.write('---')
-        st.header('**Pandas Profiling Report**')
-        st_profile_report(pr)
+
+        if st.button("Upload to PostgreSQL"):
+            conn = create_connection()
+            cursor = conn.cursor()
+
+            for index, row in df.iterrows():
+                query = "INSERT INTO your_table (column1, column2, ...) VALUES (%s, %s, ...)"
+                data = tuple(row)  # Make sure the order matches the columns in the query
+                cursor.execute(query, data)
+
+            conn.commit()
+            conn.close()
+
+            st.success("Data uploaded to PostgreSQL!")
+
+
+if __name__ == "__main__":
+    main()
