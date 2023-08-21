@@ -26,16 +26,16 @@ def main():
 
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
-        st.write("Uploaded data:")
+        st.write("Загруженный файл:")
         st.write(df)
 
-        if st.button("Upload to PostgreSQL"):
+        if st.button("Загрузить в PostgreSQL"):
             conn = create_connection()
             cursor = conn.cursor()
 
             for index, row in df.iterrows():
                 query = "INSERT INTO your_table (column1, column2, ...) VALUES (%s, %s, ...)"
-                data = tuple(row)  # Make sure the order matches the columns in the query
+                data = tuple(row)  # надо подумать насчет размера таблиц
                 cursor.execute(query, data)
 
             conn.commit()
